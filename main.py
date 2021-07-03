@@ -3,7 +3,8 @@ import threading
 import os
 import time
 from dotenv import load_dotenv
-import dice_content
+# import dice_content
+
 
 load_dotenv()
 
@@ -15,6 +16,15 @@ key = env.get("SECRETE_KEY")
 if key == None:
     key = ""
 
+twitch_enabled = True
+odrive_enabled = False
+
+if twitch_enabled:
+    from twitch import initialize_twitch
+    initialize_twitch()
+
+if odrive_enabled:
+    from roll_alg import roll_dice
 
 queue = []
 
@@ -49,15 +59,28 @@ def handle(websocket):
                     f"[ROLLER] Handling batch with {int(request[1:])} rolls")
                 # Roll as many times as the API requires
                 for i in range(0, int(request[1:])):
-                    time.sleep(1)
-                    result = dice_content.get_dice()
+                    # Roll Dice
+                    if odrive_enabled:
+                        roll_dice()
+                    else:
+                        time.sleep(1)
+                    # Read dice
+                    # result = dice_content.get_dice()
+                    result = 5
+
                     # Send to websocket
                     websocket.send("!" + str(result))
 
             else:  # A single roll
                 print(f"[ROLLER] Handeling UUID request: {request}")
-                time.sleep(1)
-                result = dice_content.get_dice()
+                # Roll Dice
+                if odrive_enabled:
+                    roll_dice()
+                else:
+                    time.sleep(1)
+                # Read dice
+                # result = dice_content.get_dice()
+                result = 5
                 value = request + "|" + str(result)
                 websocket.send(value)
 
