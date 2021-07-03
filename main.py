@@ -1,16 +1,28 @@
 import asyncio
 import websockets
+import os
 from dotenv import load_dotenv
 
 
 async def main():
+    # Load the .env file
+    load_dotenv()
+
+    # Get the environment variables
+    env = os.environ
+
+    # Get secrete key
+    key = env.get("SECRETE_KEY")
+    if key == None:
+        key = ""
+
     # The URL of the webserver
     uri = "ws://tr.host.qrl.nz:3456/"
 
     # Connect to the websocket
     async with websockets.connect(uri) as websocket:
         # Authenticate with the API
-        websocket.send("")
+        websocket.send(key)
 
         queue = []
 
