@@ -1,53 +1,75 @@
-import asyncio
-import websockets
+import websocket
+import threading
 import os
+import time
 from dotenv import load_dotenv
 
+load_dotenv()
 
-async def main():
-    # Load the .env file
-    load_dotenv()
+# Get the environment variables
+env = os.environ
 
-    # Get the environment variables
-    env = os.environ
-
-    # Get secrete key
-    key = env.get("SECRETE_KEY")
-    if key == None:
-        key = ""
-
-    # The URL of the webserver
-    uri = "ws://tr.host.qrl.nz:3456/"
-
-    # Connect to the websocket
-    async with websockets.connect(uri) as websocket:
-        # Authenticate with the API
-        websocket.send(key)
-
-        queue = []
-
-        # Forward any requests to be handled synchronously
-        async for request in websocket:
-            queue.put(request)
-
-        while True:
-            if len(queue) > 0:
-                with queue[0] as request:
-                    if request.starts_with("!"):  # Processing a buffer
-                        # Roll as many times as the API requires
-                        for i in range(0, int(request[1:])):
-                            # TODO: Roll
-                            result = 5
-                            # Send to websocket
-                            websocket.send("!" + result)
-
-                    else:  # A single roll
-                        # TODO: Roll
-                        result = 5
-                        value = request + "|" + result
-                        websocket.sens(value)
-
-                    del queue[0]
+# Get secrete key
+key = env.get("SECRETE_KEY")
+if key == None:
+    key = ""
 
 
-asyncio.get_event_loop().run_until_complete(main())
+queue = []
+
+
+def on_message(ws, message):
+    print(f"[MESSAGE HANDLER] Received message {message}")
+    queue.append(message)
+
+
+def on_error(ws, error):
+    print(error)
+
+
+def on_close(ws):
+    print("[WEBSOCKET] Closed")
+
+
+def on_open(ws):
+    def run(*args):
+        ws.send(key)
+    threading.Thread(target=run, args=()).start()
+    threading.Thread(target=handle, args=(ws,)).start()
+
+
+def handle(websocket):
+    while True:
+        if len(queue) > 0:
+            request = queue[0]
+            print(f"[ROLLER] Handling {request}")
+            if request.startswith("!"):  # Processing a buffer
+                print(
+                    f"[ROLLER] Handling batch with {int(request[1:])} rolls")
+                # Roll as many times as the API requires
+                for i in range(0, int(request[1:])):
+                    # TODO: Roll
+                    time.sleep(1)
+                    result = -1
+                    # Send to websocket
+                    websocket.send("!" + str(result))
+
+            else:  # A single roll
+                print(f"[ROLLER] Handeling UUID request: {request}")
+                # TODO: Roll
+                time.sleep(1)
+                result = 5
+                value = request + "|" + str(result)
+                websocket.send(value)
+
+            del queue[0]
+
+
+if __name__ == "__main__":
+    ws = websocket.WebSocketApp("ws://tr.host.qrl.nz/",
+                                on_message=on_message,
+                                on_error=on_error,
+                                on_close=on_close)
+
+    ws.on_open = on_open
+    ws.run_forever()
