@@ -1,1 +1,3 @@
-true-random-api
+# True Random Node
+
+Handles receiving commands from public api and rolls dice.
