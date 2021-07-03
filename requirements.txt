@@ -4,3 +4,4 @@ python-dotenv==0.18.0
 opencv-python
 numpy
 sklearn
+twitchio==2.0.0b7
