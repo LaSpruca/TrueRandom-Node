@@ -18,7 +18,7 @@ class Odrive_Arm:
 
     true_movement_range: Dict[str,Tuple[float,float]] = {
         "X": (-0.25, 0.05),
-        "Y": (-0.3, 0),
+        "Y": (-0.3, -0.05),
         "Z": (-0.20, 0)
     }
 
