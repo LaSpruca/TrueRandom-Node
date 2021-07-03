@@ -3,6 +3,7 @@ import threading
 import os
 import time
 from dotenv import load_dotenv
+import dice_content
 
 load_dotenv()
 
@@ -48,17 +49,15 @@ def handle(websocket):
                     f"[ROLLER] Handling batch with {int(request[1:])} rolls")
                 # Roll as many times as the API requires
                 for i in range(0, int(request[1:])):
-                    # TODO: Roll
                     time.sleep(1)
-                    result = -1
+                    result = dice_content.get_dice()
                     # Send to websocket
                     websocket.send("!" + str(result))
 
             else:  # A single roll
                 print(f"[ROLLER] Handeling UUID request: {request}")
-                # TODO: Roll
                 time.sleep(1)
-                result = 5
+                result = dice_content.get_dice()
                 value = request + "|" + str(result)
                 websocket.send(value)
 
