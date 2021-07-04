@@ -3,7 +3,7 @@ import threading
 import os
 import time
 from dotenv import load_dotenv
-# import dice_content
+import dice_content
 
 
 load_dotenv()
@@ -17,7 +17,7 @@ if key == None:
     key = ""
 
 twitch_enabled = True
-odrive_enabled = False
+odrive_enabled = True
 
 if twitch_enabled:
     from twitch import initialize_twitch
@@ -65,8 +65,7 @@ def handle(websocket):
                     else:
                         time.sleep(1)
                     # Read dice
-                    # result = dice_content.get_dice()
-                    result = 5
+                    result = dice_content.get_dice()
 
                     # Send to websocket
                     websocket.send("!" + str(result))
@@ -79,8 +78,7 @@ def handle(websocket):
                 else:
                     time.sleep(1)
                 # Read dice
-                # result = dice_content.get_dice()
-                result = 5
+                result = dice_content.get_dice()
                 value = request + "|" + str(result)
                 websocket.send(value)
 
