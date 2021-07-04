@@ -22,10 +22,9 @@ if key == None:
 
 if twitch_enabled:
     from twitch import initialize_twitch
-    initialize_twitch()
+    threading.Thread(target=initialize_twitch, args=()).start()
 
-if odrive_enabled:
-    from roll_alg import roll_dice
+from roll_alg import roll_dice
 
 queue = []
 
@@ -44,6 +43,7 @@ def on_close(ws):
 
 
 def on_open(ws):
+    print("Websocket Opened")
     def run(*args):
         ws.send(key)
     threading.Thread(target=run, args=()).start()

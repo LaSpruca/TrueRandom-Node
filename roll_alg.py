@@ -28,12 +28,22 @@ def roll_read_dice_procedure():
     while ODRIVE_LOCK:
         time.sleep(random.random()*2)
     ODRIVE_LOCK = True
+    f = open("state.txt","w")
     # Roll Dice
+    f.write("Rolling...")
+    f.flush()
     if odrive_enabled:
         roll_dice()
     else:
+        print("Using Odrive")
         time.sleep(1)
+
     # Read dice
     result = dice_content.get_dice()
+    f.write("It's probably a "+ str(result))
+    f.flush()
+    time.sleep(2)
     ODRIVE_LOCK = False
+    f.write("")
+    f.close()
     return result

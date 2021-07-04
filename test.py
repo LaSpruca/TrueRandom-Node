@@ -2,14 +2,20 @@ import cv2
 import numpy as np
 from sklearn import cluster
 
+# Setting up the blob detector
+params = cv2.SimpleBlobDetector_Params()
 
-def get_blobs(frame, detector):
+params.filterByInertia
+params.minInertiaRatio = 0.6
+
+detector = cv2.SimpleBlobDetector_create(params)
+
+def get_blobs(frame):
     frame_blurred = cv2.medianBlur(frame, 7)
     frame_gray = cv2.cvtColor(frame_blurred, cv2.COLOR_BGR2GRAY)
     blobs = detector.detect(frame_gray)
 
     return blobs
-
 
 def get_dice_from_blobs(blobs):
     # Get centroids of all blobs
@@ -44,7 +50,6 @@ def get_dice_from_blobs(blobs):
     else:
         return []
 
-
 def overlay_info(frame, dice, blobs):
     # Overlay blobs
     for b in blobs:
@@ -65,32 +70,26 @@ def overlay_info(frame, dice, blobs):
                      int(d[2] + textsize[1] / 2)),
                     cv2.FONT_HERSHEY_PLAIN, 3, (0, 255, 0), 2)
 
+# Initialize a video feed
+cap = cv2.VideoCapture(5)
 
-def get_dice():
-    # Setting up the blob detector
-    params = cv2.SimpleBlobDetector_Params()
+while(True):
+    # Grab the latest image from the video feed
+    ret, frame = cap.read()
 
-    params.filterByInertia
-    params.minInertiaRatio = 0.6
+    # We'll define these later
+    blobs = get_blobs(frame)
+    dice = get_dice_from_blobs(blobs)
+    out_frame = overlay_info(frame, dice, blobs)
 
-    detector = cv2.SimpleBlobDetector_create(params)
+    cv2.imshow("frame", frame)
 
-    # Initialize a video feed
-    cap = cv2.VideoCapture(5)
+    res = cv2.waitKey(1)
 
-    while True:
-        ret, frame = cap.read()
+    # Stop if the user presses "q"
+    if res & 0xFF == ord('q'):
+        break
 
-        # We'll define these later
-        blobs = get_blobs(frame, detector)
-        dice = get_dice_from_blobs(blobs)
-
-        print(dice)
-
-        if len(dice) != 1:
-            continue
-
-        # When everything is done, release the capture
-        cap.release()
-
-        return dice[0][0]
+# When everything is done, release the capture
+cap.release()
+cv2.destroyAllWindows()
