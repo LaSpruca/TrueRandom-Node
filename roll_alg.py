@@ -40,10 +40,12 @@ def roll_read_dice_procedure():
 
     # Read dice
     result = dice_content.get_dice()
+    f.truncate(0)
     f.write("It's probably a "+ str(result))
     f.flush()
     time.sleep(2)
     ODRIVE_LOCK = False
-    f.write("")
+    
+    f.truncate(0)
     f.close()
     return result
