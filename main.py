@@ -14,7 +14,6 @@ key = env.get("SECRETE_KEY")
 if key == None:
     key = ""
 
-from roll_alg import roll_dice
 
 queue = []
 
@@ -67,10 +66,12 @@ def handle(websocket):
 
 
 if __name__ == "__main__":
+    print("Generating websocket app")
     ws = websocket.WebSocketApp("ws://tr.host.qrl.nz/",
                                 on_message=on_message,
                                 on_error=on_error,
                                 on_close=on_close)
+    print("Opening")
 
     ws.on_open = on_open
     ws.run_forever()
