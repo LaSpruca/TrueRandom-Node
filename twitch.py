@@ -2,6 +2,7 @@ import os
 from twitchio import *
 from twitchio.ext import commands
 
+from roll_alg import roll_read_dice_procedure
 
 class Bot(commands.Bot):
 
@@ -18,8 +19,9 @@ class Bot(commands.Bot):
         await self.handle_commands(message)
 
     # Commands use a different decorator
-    @commands.command(name='test')
-    async def my_command(self, ctx):
+    @commands.command(name='roll')
+    async def roll_command(self, ctx):
+        result = roll_read_dice_procedure()
         await ctx.send(f'Hello {ctx.author.name}!')
 
 
