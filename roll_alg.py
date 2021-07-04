@@ -21,7 +21,7 @@ def roll_dice():
         pos = (x_pos,random.random(),random.random())
         arm.move_traj(pos)
     arm.move_traj((0.5,0.5,0.5))
-    time.sleep(3)
+    time.sleep(0.5)
 
 def roll_read_dice_procedure():
     global ODRIVE_LOCK
@@ -39,13 +39,11 @@ def roll_read_dice_procedure():
         time.sleep(1)
 
     # Read dice
-    result = dice_content.get_dice()
     f.truncate(0)
+    result = dice_content.get_dice()
     f.write("It's probably a "+ str(result))
     f.flush()
-    time.sleep(2)
     ODRIVE_LOCK = False
     
-    f.truncate(0)
     f.close()
     return result
