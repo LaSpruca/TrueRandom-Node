@@ -2,14 +2,9 @@ import websocket
 import threading
 import os
 import time
-from dotenv import load_dotenv
 import random
 from roll_alg import roll_read_dice_procedure
 
-twitch_enabled = True
-
-
-load_dotenv()
 
 # Get the environment variables
 env = os.environ
@@ -18,11 +13,6 @@ env = os.environ
 key = env.get("SECRETE_KEY")
 if key == None:
     key = ""
-
-
-if twitch_enabled:
-    from twitch import initialize_twitch
-    threading.Thread(target=initialize_twitch, args=()).start()
 
 from roll_alg import roll_dice
 
