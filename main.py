@@ -5,6 +5,9 @@ import time
 import random
 from roll_alg import roll_read_dice_procedure
 
+from dotenv import load_dotenv
+load_dotenv()
+
 
 # Get the environment variables
 env = os.environ
