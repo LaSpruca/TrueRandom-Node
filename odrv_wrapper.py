@@ -237,9 +237,7 @@ class Odrive_Arm:
         Warning: Allows you to move to a position that does not exist
         """
         for id,axis_id in enumerate(["X","Y","Z"]):
-            print(axis_id)
             if self.axes_enabled[axis_id]:
-                print("enabled")
                 self.axes[axis_id].controller.input_pos = raw_pos[id]
 
 

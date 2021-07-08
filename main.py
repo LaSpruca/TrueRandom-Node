@@ -22,7 +22,6 @@ queue = []
 
 
 def on_message(ws, message):
-    print(f"[MESSAGE HANDLER] Received message {message}")
     if message == "ping":
         ws.send("pong")
     else:
