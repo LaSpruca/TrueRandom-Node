@@ -23,7 +23,10 @@ queue = []
 
 def on_message(ws, message):
     print(f"[MESSAGE HANDLER] Received message {message}")
-    queue.append(message)
+    if message == "ping":
+        ws.send("pong")
+    else:
+        queue.append(message)
 
 
 def on_error(ws, error):
