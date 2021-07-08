@@ -78,19 +78,25 @@ def get_dice():
     # Initialize a video feed
     cap = cv2.VideoCapture(3)
 
-    while True:
-        ret, frame = cap.read()
+    results = []
 
-        # We'll define these later
-        blobs = get_blobs(frame, detector)
-        dice = get_dice_from_blobs(blobs)
+    for _ in range(5):
+        while True:
+            ret, frame = cap.read()
 
-        print(dice)
+            # We'll define these later
+            blobs = get_blobs(frame, detector)
+            dice = get_dice_from_blobs(blobs)
 
-        if len(dice) != 1:
-            continue
+            print(dice)
 
-        # When everything is done, release the capture
-        cap.release()
+            if len(dice) != 1:
+                continue
+            else:
+                results.append(dice[0][0])
+                break
 
-        return dice[0][0]
+    # When everything is done, release the capture
+    cap.release()
+
+    return max(results)

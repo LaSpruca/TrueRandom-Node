@@ -36,19 +36,15 @@ def roll_read_dice_procedure():
         print("Using Odrive")
         time.sleep(1)
 
-    # Read dice
-    # result_points = []
-    # for i in range(3):
-    #     result_points.append(dice_content.get_dice())
-    # result = max(result_points)
-    # print("\n\nAVERAGED RESULT:",result)
-    # f = open("state.txt","w")
-    # f.write("Last Roll: "+ str(result))
+    result = dice_content.get_dice()
+    print("\n\nAVERAGED RESULT:",result)
+    f = open("state.txt","w")
+    f.write("Last Roll: "+ str(result))
 
     ODRIVE_LOCK = False
     
-    # f.close()
-    # return result
+    f.close()
+    return result
 
 if __name__=="__main__":
     while True:
