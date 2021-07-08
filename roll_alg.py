@@ -20,8 +20,8 @@ def roll_dice():
         x_direction = i%2==0
         x_pos = random.random()/2+0.5*x_direction
         pos = (x_pos,random.random(),random.random())
-        arm.move_traj(pos)
-    arm.move_traj((0.5,0.5,0.5))
+        arm.move_blocking(pos)
+    arm.move_blocking((0.5,0.5,0.5))
     time.sleep(1)
 
 def roll_read_dice_procedure():

@@ -5,7 +5,7 @@ from odrive.utils import *
 import time
 
 arm = Odrive_Arm()
-arm.move_traj((0.5,0.5,0.5))
+arm.move_blocking((0.5,0.5,0.5))
 
 # start_liveplotter(lambda:[arm.odrv_X.axis0.encoder.pos_estimate, arm.odrv_X.axis0.controller.pos_setpoint])
 start_liveplotter(lambda:[arm.odrv_X.axis0.motor.current_control.Iq_setpoint, arm.odrv_X.axis0.motor.current_control.Iq_measured])
@@ -68,7 +68,7 @@ def get(input):
 
 def goto():
     try:
-        arm.move_traj((get(X_input),get(Y_input),get(Z_input)))
+        arm.move_blocking((get(X_input),get(Y_input),get(Z_input)))
     except AssertionError:
         print("move failed")
 
