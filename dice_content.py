@@ -76,7 +76,7 @@ def get_dice():
     detector = cv2.SimpleBlobDetector_create(params)
 
     # Initialize a video feed
-    cap = cv2.VideoCapture(5)
+    cap = cv2.VideoCapture(3)
 
     while True:
         ret, frame = cap.read()

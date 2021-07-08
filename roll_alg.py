@@ -2,6 +2,7 @@ from odrv_wrapper import Odrive_Arm
 import time
 import random
 import dice_content
+import statistics
 
 odrive_enabled = True
 
@@ -21,17 +22,14 @@ def roll_dice():
         pos = (x_pos,random.random(),random.random())
         arm.move_traj(pos)
     arm.move_traj((0.5,0.5,0.5))
-    time.sleep(0.5)
+    time.sleep(1)
 
 def roll_read_dice_procedure():
     global ODRIVE_LOCK
     while ODRIVE_LOCK:
         time.sleep(random.random()*2)
     ODRIVE_LOCK = True
-    f = open("state.txt","w")
     # Roll Dice
-    f.write("Rolling...")
-    f.flush()
     if odrive_enabled:
         roll_dice()
     else:
@@ -39,11 +37,20 @@ def roll_read_dice_procedure():
         time.sleep(1)
 
     # Read dice
-    f.truncate(0)
-    result = dice_content.get_dice()
-    f.write("It's probably a "+ str(result))
-    f.flush()
+    # result_points = []
+    # for i in range(3):
+    #     result_points.append(dice_content.get_dice())
+    # result = max(result_points)
+    # print("\n\nAVERAGED RESULT:",result)
+    # f = open("state.txt","w")
+    # f.write("Last Roll: "+ str(result))
+
     ODRIVE_LOCK = False
     
-    f.close()
-    return result
+    # f.close()
+    # return result
+
+if __name__=="__main__":
+    while True:
+        roll_read_dice_procedure()
+        time.sleep(2)
