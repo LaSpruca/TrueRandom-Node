@@ -33,18 +33,21 @@ def on_error(ws, error):
 
 
 def on_close(ws):
-    print("[WEBSOCKET] Closed")
+    print("[WEBSOCKET] Closed, Reconnecting")
+    connect_to_websocket()
 
 
 def on_open(ws):
+    global handle_thread
     print("Websocket Opened")
     def run(*args):
         ws.send(key)
     threading.Thread(target=run, args=()).start()
-    threading.Thread(target=handle, args=(ws,)).start()
 
 
-def handle(websocket):
+def roll_queue():
+    global ws
+    global queue
     while True:
         if len(queue) > 0:
             request = queue[0]
@@ -57,20 +60,18 @@ def handle(websocket):
                     result = roll_read_dice_procedure()
 
                     # Send to websocket
-                    websocket.send("!" + str(result))
+                    ws.send("!" + str(result))
 
             else:  # A single roll
                 print(f"[ROLLER] Handeling UUID request: {request}")
                 result = roll_read_dice_procedure()
                 value = request + "|" + str(result)
-                websocket.send(value)
+                ws.send(value)
 
             del queue[0]
 
-
-
-
-if __name__ == "__main__":
+def connect_to_websocket():
+    global ws
     print("Generating websocket app")
     ws = websocket.WebSocketApp("ws://tr.host.qrl.nz/",
                                 on_message=on_message,
@@ -80,3 +81,8 @@ if __name__ == "__main__":
 
     ws.on_open = on_open
     ws.run_forever()
+if __name__ == "__main__":
+    
+    threading.Thread(target=roll_queue)
+    connect_to_websocket()
+    
