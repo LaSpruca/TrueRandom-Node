@@ -20,8 +20,9 @@ if key == None:
 
 queue = []
 
-
 def on_message(ws, message):
+    global queue
+    print("received message",message)
     if message == "ping":
         ws.send("pong")
     else:
@@ -45,31 +46,42 @@ def on_open(ws):
         ws.send(key)
     threading.Thread(target=run, args=()).start()
 
+def clear():
+    global ws
+    global queue
+    ws.close()
+    queue = []    
+
 
 def roll_queue():
     global ws
     global queue
     while True:
-        if len(queue) > 0:
-            request = queue[0]
-            print(f"[ROLLER] Handling {request}")
-            if request.startswith("!"):  # Processing a buffer
-                print(
-                    f"[ROLLER] Handling batch with {int(request[1:])} rolls")
-                # Roll as many times as the API requires
-                for i in range(0, int(request[1:])):
+        try:
+            if len(queue) > 0:
+                request = queue[0]
+                print(f"[ROLLER] Handling {request}")
+                if request.startswith("!"):  # Processing a buffer
+                    print(
+                        f"[ROLLER] Handling batch with {int(request[1:])} rolls")
+                    # Roll as many times as the API requires
+                    for i in range(0, int(request[1:])):
+                        result = roll_read_dice_procedure()
+
+                        # Send to websocket
+                        ws.send("!" + str(result))
+
+                else:  # A single roll
+                    print(f"[ROLLER] Handeling UUID request: {request}")
                     result = roll_read_dice_procedure()
+                    value = request + "|" + str(result)
+                    ws.send(value)
 
-                    # Send to websocket
-                    ws.send("!" + str(result))
-
-            else:  # A single roll
-                print(f"[ROLLER] Handeling UUID request: {request}")
-                result = roll_read_dice_procedure()
-                value = request + "|" + str(result)
-                ws.send(value)
-
-            del queue[0]
+                del queue[0]
+        except Exception as e:
+            print("Roll Queue failed",e)
+            pass
+        time.sleep(0.1)
 
 def connect_to_websocket():
     global ws
@@ -83,8 +95,15 @@ def connect_to_websocket():
     ws.on_open = on_open
     ws.run_forever()
 if __name__ == "__main__":
-    
-    threading.Thread(target=roll_queue)
+    global roll_queue_handle
+
+    roll_queue_handle = threading.Thread(target=roll_queue)
+    roll_queue_handle.start()
     while True:
         connect_to_websocket()
+        try:
+            ws.close()
+        except Exception:
+            # imagine
+            pass
     
