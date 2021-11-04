@@ -30,11 +30,12 @@ def on_message(ws, message):
 
 def on_error(ws, error):
     print(error)
+    ws.close()
 
 
 def on_close(ws):
     print("[WEBSOCKET] Closed, Reconnecting")
-    connect_to_websocket()
+    ws.close()
 
 
 def on_open(ws):
@@ -84,5 +85,6 @@ def connect_to_websocket():
 if __name__ == "__main__":
     
     threading.Thread(target=roll_queue)
-    connect_to_websocket()
+    while True:
+        connect_to_websocket()
     
