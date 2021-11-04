@@ -71,7 +71,7 @@ def overlay_info(frame, dice, blobs):
                     cv2.FONT_HERSHEY_PLAIN, 3, (0, 255, 0), 2)
 
 # Initialize a video feed
-cap = cv2.VideoCapture(3)
+cap = cv2.VideoCapture(6)
 
 while(True):
     # Grab the latest image from the video feed
